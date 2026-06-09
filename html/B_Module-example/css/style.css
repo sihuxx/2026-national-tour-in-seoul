@@ -1,0 +1,199 @@
+@charset "UTF-8";
+/* =========================================================================
+   투어 in 서울 — B Module  |  순수 HTML5 + CSS3 (JavaScript 미사용)
+   Concept: "Seoul After Dark" — 한강 위로 번지는 도시의 빛
+   ========================================================================= */
+
+/* ---------- Design Tokens ---------- */
+:root{
+  --ink:#0b1026;          /* 깊은 야경 남색 */
+  --ink-2:#141a3a;
+  --ink-3:#1d2550;
+  --paper:#f7f8fc;
+  --paper-2:#eef1fa;
+  --line:#e2e6f2;
+  --text:#1b2140;
+  --text-soft:#5a6285;
+  --text-faint:#8b92b3;
+  --cyan:#36e0d4;         /* 네온 청록 */
+  --magenta:#ff4d8d;      /* 네온 자홍 */
+  --gold:#ffc24b;         /* 한강 가로등 */
+  --violet:#7b6cff;
+  --grad:linear-gradient(120deg,var(--cyan),var(--violet) 55%,var(--magenta));
+  --grad-soft:linear-gradient(120deg,rgba(54,224,212,.16),rgba(255,77,141,.16));
+  --shadow:0 18px 50px -18px rgba(8,12,40,.45);
+  --shadow-sm:0 8px 24px -12px rgba(8,12,40,.4);
+  --radius:18px;
+  --radius-sm:12px;
+  --maxw:1280px;
+  --header-h:84px;
+  --display:"Pretendard","Noto Sans KR",-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --body:"Pretendard","Noto Sans KR",-apple-system,"Apple SD Gothic Neo",sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  color:var(--text);
+  background:var(--paper);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px}
+.eyebrow{
+  display:inline-block;font-size:13px;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--violet);margin-bottom:14px;
+}
+.section-title{
+  font-family:var(--display);font-weight:800;letter-spacing:-.02em;
+  font-size:clamp(28px,3.4vw,42px);line-height:1.12;color:var(--ink);
+}
+.section-title .accent{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.more-link{
+  display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:14px;
+  color:var(--text-soft);transition:.25s;
+}
+.more-link::after{content:"→";transition:transform .25s}
+.more-link:hover{color:var(--magenta)}
+.more-link:hover::after{transform:translateX(5px)}
+
+/* ====================================================================
+   1) LOADING — 접속/새로고침 시 약 5초 노출, 동적 효과 포함
+   ==================================================================== */
+.loader{
+  position:fixed;inset:0;z-index:2000;
+  background:radial-gradient(120% 120% at 50% 30%,#1a2150,#070a1c 70%);
+  display:grid;place-items:center;
+  animation:loaderOut .9s ease 5s forwards;
+}
+.loader__inner{text-align:center;color:#fff}
+.loader__mark{
+  font-family:var(--display);font-weight:800;font-size:clamp(34px,7vw,68px);
+  letter-spacing:-.03em;line-height:1;position:relative;
+}
+.loader__mark .in{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.loader__skyline{
+  width:min(360px,72vw);height:96px;margin:26px auto 0;position:relative;
+  overflow:hidden;
+}
+.loader__skyline span{
+  position:absolute;bottom:0;width:14px;border-radius:3px 3px 0 0;
+  background:linear-gradient(180deg,var(--cyan),var(--violet));
+  opacity:.85;animation:rise 1.2s ease-in-out infinite;
+}
+.loader__skyline span:nth-child(1){left:4%;height:40px;animation-delay:0s}
+.loader__skyline span:nth-child(2){left:14%;height:66px;animation-delay:.1s;background:linear-gradient(180deg,var(--gold),var(--magenta))}
+.loader__skyline span:nth-child(3){left:24%;height:30px;animation-delay:.2s}
+.loader__skyline span:nth-child(4){left:34%;height:82px;animation-delay:.3s}
+.loader__skyline span:nth-child(5){left:45%;height:52px;animation-delay:.15s;background:linear-gradient(180deg,var(--gold),var(--magenta))}
+.loader__skyline span:nth-child(6){left:56%;height:72px;animation-delay:.25s}
+.loader__skyline span:nth-child(7){left:67%;height:38px;animation-delay:.05s}
+.loader__skyline span:nth-child(8){left:78%;height:60px;animation-delay:.35s;background:linear-gradient(180deg,var(--gold),var(--magenta))}
+.loader__skyline span:nth-child(9){left:89%;height:46px;animation-delay:.2s}
+.loader__bar{
+  width:min(360px,72vw);height:4px;margin:22px auto 0;border-radius:99px;
+  background:rgba(255,255,255,.14);overflow:hidden;
+}
+.loader__bar::after{
+  content:"";display:block;height:100%;width:40%;border-radius:99px;
+  background:var(--grad);animation:load 5s ease forwards;
+}
+.loader__cap{margin-top:16px;font-size:13px;letter-spacing:.32em;color:rgba(255,255,255,.55);text-transform:uppercase}
+@keyframes rise{0%,100%{transform:scaleY(.55);opacity:.5}50%{transform:scaleY(1);opacity:1}}
+@keyframes load{0%{width:0}80%{width:92%}100%{width:100%}}
+@keyframes loaderOut{to{opacity:0;visibility:hidden}}
+
+/* ====================================================================
+   2) HEADER — 고정, 로고/내비/검색/로그인/회원가입
+   ==================================================================== */
+.site-header{
+  position:fixed;top:0;left:0;right:0;z-index:900;height:var(--header-h);
+  background:rgba(11,16,38,.72);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.site-header .wrap{height:100%;display:flex;align-items:center;gap:28px}
+.brand{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.brand__symbol{width:38px;height:38px;flex-shrink:0}
+.brand__text{
+  font-family:var(--display);font-weight:800;font-size:20px;color:#fff;
+  letter-spacing:-.02em;white-space:nowrap;
+}
+.brand__text .in{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;padding:0 1px;
+}
+
+.gnb{display:flex;gap:6px;margin-left:8px}
+.gnb a{
+  position:relative;color:rgba(255,255,255,.82);font-weight:600;font-size:16px;
+  padding:10px 16px;border-radius:10px;transition:color .2s;
+}
+.gnb a::after{                         /* 시선을 끄는 효과: 밑줄 슬라이드 */
+  content:"";position:absolute;left:16px;right:16px;bottom:6px;height:2px;
+  background:var(--grad);transform:scaleX(0);transform-origin:left;
+  transition:transform .3s ease;border-radius:2px;
+}
+.gnb a:hover{color:#fff}
+.gnb a:hover::after{transform:scaleX(1)}
+
+.header-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.search{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);
+  border-radius:99px;padding:8px 14px;transition:.25s;
+}
+.search:focus-within{background:rgba(255,255,255,.16);border-color:var(--cyan)}
+.search svg{width:16px;height:16px;flex-shrink:0;stroke:rgba(255,255,255,.7)}
+.search input{
+  background:none;border:none;outline:none;color:#fff;font-size:14px;width:130px;
+}
+.search input::placeholder{color:rgba(255,255,255,.55)}
+.btn-auth{
+  font-weight:700;font-size:14px;padding:9px 16px;border-radius:99px;
+  color:rgba(255,255,255,.9);transition:.2s;white-space:nowrap;display:inline-block;
+}
+.btn-auth:hover{background:rgba(255,255,255,.12)}
+.btn-auth.solid{
+  color:#0b1026;background:linear-gradient(120deg,var(--cyan),var(--violet));
+}
+.btn-auth.solid:hover{filter:brightness(1.08)}
+
+/* 햄버거 (모바일 전용 토글) */
+.nav-toggle,.nav-toggle-label{display:none}
+.hamburger{display:none}
+.mobile-nav{display:none}
+
+/* ====================================================================
+   3) FOOTER
+   ==================================================================== */
+.site-footer{background:var(--ink);color:rgba(255,255,255,.7);padding:64px 0 40px}
+.site-footer .wrap{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:start}
+.footer-brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}
+.footer-brand .brand__text{font-size:22px}
+.footer-info p{font-size:14px;line-height:1.9;color:rgba(255,255,255,.6)}
+.footer-info .copy{margin-top:18px;font-size:13px;color:rgba(255,255,255,.4)}
+.footer-social{display:flex;gap:12px;justify-content:flex-end}
+.footer-social a{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  transition:.25s;
+}
+.footer-social a:hover{background:var(--grad);transform:translateY(-3px)}
+.footer-social svg{width:20px;height:20px;fill:#fff}
+@media(max-width:760px){
+  .site-footer .wrap{grid-template-columns:1fr}
+  .footer-social{justify-content:flex-start}
+}

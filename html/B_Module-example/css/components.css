@@ -1,0 +1,525 @@
+@charset "UTF-8";
+/* =========================================================================
+   투어 in 서울 — components.css  |  모든 동적 기능을 CSS만으로 구현
+   ========================================================================= */
+
+main{display:block}
+.section{padding:96px 0}
+.section--tint{background:var(--paper-2)}
+.section-head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:24px;margin-bottom:44px;flex-wrap:wrap;
+}
+
+/* ====================================================================
+   비주얼 영역 — 3장 페이드 슬라이드 / 자동·수동 토글 / 독립 텍스트
+   기법: radio(.vis-r) = 수동, checkbox(#vis-auto)=자동모드 토글
+   ==================================================================== */
+.visual{
+  position:relative;height:100vh;min-height:620px;margin-top:0;
+  background:#070a1c;overflow:hidden;
+}
+.visual__r{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
+.visual__slides{position:absolute;inset:0}
+.vis-slide{
+  position:absolute;inset:0;opacity:0;visibility:hidden;
+  transition:opacity 1s ease,visibility 1s ease;
+}
+.vis-slide img{width:100%;height:100%;object-fit:cover}
+.vis-slide::after{                      /* 가독성 그라데이션 오버레이 */
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(7,10,28,.35) 0%,rgba(7,10,28,.15) 40%,rgba(7,10,28,.78) 100%);
+}
+.vis-caption{
+  position:absolute;left:0;right:0;bottom:20%;z-index:3;
+  text-align:center;color:#fff;padding:0 24px;pointer-events:none;
+  opacity:0;transform:translateY(28px);
+  transition:opacity .9s ease .15s,transform .9s ease .15s;
+}
+.vis-caption .tag{
+  display:inline-block;font-size:13px;font-weight:700;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:18px;
+}
+.vis-caption h2{
+  font-family:var(--display);font-weight:800;letter-spacing:-.02em;
+  font-size:clamp(30px,5.4vw,64px);line-height:1.1;
+  text-shadow:0 4px 30px rgba(0,0,0,.4);
+}
+
+/* 수동: 선택된 라디오에 대응하는 슬라이드/캡션 노출 */
+#vis1:checked~.visual__slides .vis-slide:nth-child(1),
+#vis2:checked~.visual__slides .vis-slide:nth-child(2),
+#vis3:checked~.visual__slides .vis-slide:nth-child(3){opacity:1;visibility:visible}
+#vis1:checked~.visual__slides .vis-slide:nth-child(1) .vis-caption,
+#vis2:checked~.visual__slides .vis-slide:nth-child(2) .vis-caption,
+#vis3:checked~.visual__slides .vis-slide:nth-child(3) .vis-caption{opacity:1;transform:none}
+
+/* 자동: 토글 ON이면 라디오 선택을 무시하고 keyframes로 3.6초 순환 */
+.visual__slides .vis-slide{animation-play-state:paused}
+#vis-auto:checked~.visual__slides .vis-slide{
+  animation:visAuto 10.8s infinite;visibility:visible;animation-play-state:running;
+}
+#vis-auto:checked~.visual__slides .vis-slide:nth-child(1){animation-delay:0s}
+#vis-auto:checked~.visual__slides .vis-slide:nth-child(2){animation-delay:3.6s}
+#vis-auto:checked~.visual__slides .vis-slide:nth-child(3){animation-delay:7.2s}
+#vis-auto:checked~.visual__slides .vis-slide .vis-caption{
+  animation:visCapAuto 10.8s infinite;
+}
+#vis-auto:checked~.visual__slides .vis-slide:nth-child(1) .vis-caption{animation-delay:0s}
+#vis-auto:checked~.visual__slides .vis-slide:nth-child(2) .vis-caption{animation-delay:3.6s}
+#vis-auto:checked~.visual__slides .vis-slide:nth-child(3) .vis-caption{animation-delay:7.2s}
+@keyframes visAuto{           /* 한 장당 3.6s, 전체 10.8s → 전환 4초 이내 */
+  0%{opacity:0;visibility:hidden}
+  3%{opacity:1;visibility:visible}
+  30%{opacity:1;visibility:visible}
+  36%{opacity:0;visibility:hidden}
+  100%{opacity:0;visibility:hidden}
+}
+@keyframes visCapAuto{
+  0%{opacity:0;transform:translateY(28px)}
+  4%{opacity:1;transform:none}
+  30%{opacity:1;transform:none}
+  36%{opacity:0;transform:translateY(-14px)}
+  100%{opacity:0;transform:translateY(-14px)}
+}
+
+/* 컨트롤 바 */
+.visual__ui{
+  position:absolute;left:0;right:0;bottom:42px;z-index:6;
+  display:flex;align-items:center;justify-content:center;gap:22px;
+}
+.vis-arrow{
+  width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  backdrop-filter:blur(6px);color:#fff;font-size:20px;transition:.25s;cursor:pointer;
+}
+.vis-arrow:hover{background:rgba(255,255,255,.28)}
+.vis-arrows{position:relative;width:52px;height:52px;flex:0 0 52px}
+/* 각 슬롯에 3개의 화살표(.a1/.a2/.a3)가 겹쳐 있고, 현재 활성 슬라이드의 것만 표시 */
+.vis-arrows .vis-arrow{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none}
+#vis1:checked~.visual__ui .vis-arrow.a1,
+#vis2:checked~.visual__ui .vis-arrow.a2,
+#vis3:checked~.visual__ui .vis-arrow.a3{opacity:1;visibility:visible;pointer-events:auto}
+/* 자동모드면 화살표 영역 숨김 */
+#vis-auto:checked~.visual__ui .vis-arrows{visibility:hidden}
+.vis-dots{display:flex;gap:10px}
+.vis-dots label{
+  width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.4);
+  cursor:pointer;transition:.25s;
+}
+.vis-dots label:hover{background:rgba(255,255,255,.7)}
+#vis1:checked~.visual__ui .vis-dots label:nth-child(1),
+#vis2:checked~.visual__ui .vis-dots label:nth-child(2),
+#vis3:checked~.visual__ui .vis-dots label:nth-child(3){background:var(--cyan);transform:scale(1.25)}
+#vis-auto:checked~.visual__ui .vis-dots{opacity:.5}
+
+.vis-toggle{
+  display:inline-flex;align-items:center;gap:9px;cursor:pointer;color:#fff;
+  font-size:13px;font-weight:600;background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:99px;
+  backdrop-filter:blur(6px);
+}
+.vis-toggle .knob{
+  width:38px;height:20px;border-radius:99px;background:rgba(255,255,255,.3);
+  position:relative;transition:.25s;
+}
+.vis-toggle .knob::after{
+  content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;
+  border-radius:50%;background:#fff;transition:.25s;
+}
+#vis-auto:checked~.visual__ui .vis-toggle .knob{background:var(--cyan)}
+#vis-auto:checked~.visual__ui .vis-toggle .knob::after{transform:translateX(18px)}
+.vis-toggle .lbl-auto{display:none}
+.vis-toggle .lbl-manual{display:inline}
+#vis-auto:checked~.visual__ui .vis-toggle .lbl-auto{display:inline}
+#vis-auto:checked~.visual__ui .vis-toggle .lbl-manual{display:none}
+
+/* ====================================================================
+   투어 소식 — 4영역 [축제소식 / 행사일정 / 프로그램 / 서울여행]
+   ==================================================================== */
+.news-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:22px}
+.news-card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);overflow:hidden;display:flex;flex-direction:column;
+}
+.news-card__head{padding:22px 22px 14px}
+.news-card__head h3{font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+.news-card__head .ko{display:block;font-size:12px;color:var(--violet);font-weight:700;letter-spacing:.15em;margin-bottom:6px}
+
+/* 축제소식: 텍스트 리스트 + hover 하이라이트 */
+.news-list{padding:4px 12px 12px;flex:1}
+.news-list li a{
+  display:block;padding:11px 12px;border-radius:10px;font-size:14px;color:var(--text-soft);
+  line-height:1.45;transition:.2s;border:1px solid transparent;
+}
+.news-list li a:hover{
+  background:var(--grad-soft);color:var(--ink);font-weight:600;
+  border-color:rgba(123,108,255,.25);transform:translateX(3px);
+}
+.news-list .cat{font-weight:700;color:var(--magenta);margin-right:5px}
+
+/* 행사일정/프로그램/서울여행: 이미지 hover → 텍스트 등장 */
+.news-figure{position:relative;flex:1;min-height:230px;overflow:hidden}
+.news-figure img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.news-figure:hover img{transform:scale(1.08)}
+.news-figure__overlay{
+  position:absolute;inset:0;display:flex;align-items:flex-end;padding:22px;
+  background:linear-gradient(180deg,rgba(11,16,38,0) 30%,rgba(11,16,38,.85));
+  opacity:0;transition:opacity .4s ease;
+}
+.news-figure:hover .news-figure__overlay{opacity:1}
+.news-figure__overlay p{
+  color:#fff;font-size:14px;line-height:1.5;transform:translateY(14px);
+  transition:transform .4s ease;
+}
+.news-figure:hover .news-figure__overlay p{transform:none}
+.news-card__foot{padding:14px 22px 20px}
+
+/* ====================================================================
+   투어 안내 — 달력(2026.08) + 탭(전체/축제&행사/전시&공연)
+   기법: radio(.guide-tab)
+   ==================================================================== */
+.guide-wrap{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
+.calendar{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);padding:26px;
+}
+.calendar__top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.calendar__top h3{font-family:var(--display);font-size:24px;font-weight:800;color:var(--ink)}
+.calendar__top .yr{font-size:13px;color:var(--text-faint);font-weight:700;letter-spacing:.1em}
+.calendar table{width:100%;border-collapse:collapse;table-layout:fixed}
+.calendar th{
+  font-size:12px;font-weight:700;color:var(--text-faint);padding:8px 0;
+}
+.calendar th:first-child{color:var(--magenta)}
+.calendar th:last-child{color:var(--violet)}
+.calendar td{height:46px;text-align:center;vertical-align:middle;position:relative}
+.calendar td span{
+  display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;
+  font-size:14px;color:var(--text);transition:.2s;
+}
+.calendar td.empty span{color:transparent}
+.calendar td.has-event span{font-weight:700;color:var(--ink)}
+.calendar td.has-event::after{               /* 행사 표시 점 */
+  content:"";position:absolute;left:50%;bottom:5px;transform:translateX(-50%);
+  width:6px;height:6px;border-radius:50%;background:var(--grad);
+}
+.calendar td.sun span{color:var(--magenta)}
+.calendar td.sat span{color:var(--violet)}
+.cal-legend{display:flex;gap:16px;margin-top:16px;font-size:12px;color:var(--text-soft)}
+.cal-legend i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--grad);margin-right:6px}
+
+.guide-tabs{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
+.guide-tabs__nav{display:flex;border-bottom:1px solid var(--line)}
+.guide-tabs__nav label{
+  flex:1;text-align:center;padding:16px 8px;font-weight:700;font-size:15px;
+  color:var(--text-faint);cursor:pointer;transition:.2s;position:relative;
+}
+.guide-tabs__nav label:hover{color:var(--text)}
+.guide-panel{display:none;padding:10px 22px 24px;max-height:380px;overflow-y:auto}
+.guide-panel li{
+  display:flex;justify-content:space-between;gap:14px;align-items:center;
+  padding:15px 4px;border-bottom:1px solid var(--paper-2);
+}
+.guide-panel li:last-child{border-bottom:none}
+.guide-panel .ev-name{font-weight:600;color:var(--ink);font-size:15px}
+.guide-panel .ev-date{font-size:13px;color:var(--text-faint);white-space:nowrap}
+.guide-panel .ev-badge{
+  display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;margin-right:8px;
+}
+.ev-badge.fest{background:rgba(255,77,141,.12);color:var(--magenta)}
+.ev-badge.show{background:rgba(123,108,255,.14);color:var(--violet)}
+#gt-all:checked~.guide-tabs__nav label[for=gt-all],
+#gt-fest:checked~.guide-tabs__nav label[for=gt-fest],
+#gt-show:checked~.guide-tabs__nav label[for=gt-show]{color:var(--ink)}
+#gt-all:checked~.guide-tabs__nav label[for=gt-all]::after,
+#gt-fest:checked~.guide-tabs__nav label[for=gt-fest]::after,
+#gt-show:checked~.guide-tabs__nav label[for=gt-show]::after{
+  content:"";position:absolute;left:18%;right:18%;bottom:-1px;height:3px;
+  background:var(--grad);border-radius:3px;
+}
+#gt-all:checked~.guide-tabs__body .panel-all,
+#gt-fest:checked~.guide-tabs__body .panel-fest,
+#gt-show:checked~.guide-tabs__body .panel-show{display:block}
+
+/* ====================================================================
+   에디터 추천여행 — 가로 8개, 클릭(라디오)으로 가운데 정렬 + 텍스트
+   기법: radio(.ed-r) → translateX 로 트랙 이동
+   ==================================================================== */
+.editor{overflow:hidden}
+.editor__radios{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
+.editor__viewport{position:relative;width:100%;overflow:hidden;padding:20px 0 8px}
+.editor__track{
+  display:flex;gap:26px;width:max-content;padding:0;
+  transition:transform .6s cubic-bezier(.6,.05,.2,1);
+  /* 카드폭 360 + gap 26 = 386. 첫 카드(중심 180px)를 뷰포트 중앙(50vw)에 */
+  transform:translateX(calc(50vw - 180px));
+}
+.ed-card{
+  width:360px;flex:0 0 360px;height:440px;border-radius:var(--radius);
+  overflow:hidden;position:relative;cursor:pointer;display:block;
+  box-shadow:var(--shadow);transition:transform .5s ease,filter .5s ease;
+  filter:saturate(.75) brightness(.78);transform:scale(.92);
+}
+.ed-card img{width:100%;height:100%;object-fit:cover}
+.ed-card__cap{
+  position:absolute;left:0;right:0;bottom:0;padding:26px 24px;color:#fff;
+  background:linear-gradient(180deg,rgba(11,16,38,0),rgba(11,16,38,.9));
+  transform:translateY(18px);opacity:0;transition:.5s ease;
+}
+.ed-card__cap .no{font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:.12em}
+.ed-card__cap h4{font-family:var(--display);font-size:23px;font-weight:800;margin:6px 0 8px}
+.ed-card__cap p{font-size:14px;line-height:1.55;color:rgba(255,255,255,.85)}
+
+/* 트랙 이동: n번째 선택 시 (n-2)*386px 만큼 추가 이동하여 가운데로 */
+#ed1:checked~.editor__viewport .editor__track{transform:translateX(calc(50vw - 180px - 0px))}
+#ed2:checked~.editor__viewport .editor__track{transform:translateX(calc(50vw - 180px - 386px))}
+#ed3:checked~.editor__viewport .editor__track{transform:translateX(calc(50vw - 180px - 772px))}
+#ed4:checked~.editor__viewport .editor__track{transform:translateX(calc(50vw - 180px - 1158px))}
+#ed5:checked~.editor__viewport .editor__track{transform:translateX(calc(50vw - 180px - 1544px))}
+#ed6:checked~.editor__viewport .editor__track{transform:translateX(calc(50vw - 180px - 1930px))}
+#ed7:checked~.editor__viewport .editor__track{transform:translateX(calc(50vw - 180px - 2316px))}
+#ed8:checked~.editor__viewport .editor__track{transform:translateX(calc(50vw - 180px - 2702px))}
+/* 선택된 카드 강조 + 텍스트 */
+#ed1:checked~.editor__viewport .ed-card:nth-child(1),
+#ed2:checked~.editor__viewport .ed-card:nth-child(2),
+#ed3:checked~.editor__viewport .ed-card:nth-child(3),
+#ed4:checked~.editor__viewport .ed-card:nth-child(4),
+#ed5:checked~.editor__viewport .ed-card:nth-child(5),
+#ed6:checked~.editor__viewport .ed-card:nth-child(6),
+#ed7:checked~.editor__viewport .ed-card:nth-child(7),
+#ed8:checked~.editor__viewport .ed-card:nth-child(8){
+  filter:none;transform:scale(1);
+}
+#ed1:checked~.editor__viewport .ed-card:nth-child(1) .ed-card__cap,
+#ed2:checked~.editor__viewport .ed-card:nth-child(2) .ed-card__cap,
+#ed3:checked~.editor__viewport .ed-card:nth-child(3) .ed-card__cap,
+#ed4:checked~.editor__viewport .ed-card:nth-child(4) .ed-card__cap,
+#ed5:checked~.editor__viewport .ed-card:nth-child(5) .ed-card__cap,
+#ed6:checked~.editor__viewport .ed-card:nth-child(6) .ed-card__cap,
+#ed7:checked~.editor__viewport .ed-card:nth-child(7) .ed-card__cap,
+#ed8:checked~.editor__viewport .ed-card:nth-child(8) .ed-card__cap{opacity:1;transform:none}
+.editor__hint{text-align:center;font-size:13px;color:var(--text-faint);margin-top:18px}
+
+/* ====================================================================
+   투어 홍보영상 — 1.mp4 / 2.mp4 전환 (controls 숨김, loop, 전환효과)
+   기법: checkbox(#promo-switch)
+   ==================================================================== */
+.promo{position:relative}
+.promo__stage{
+  position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);background:#000;max-width:1040px;margin:0 auto;
+}
+.promo__video{position:absolute;inset:0;width:100%;height:100%}
+.promo__video video{width:100%;height:100%;object-fit:cover}
+.promo__v1,.promo__v2{transition:opacity .8s ease,transform .8s ease}
+.promo__v2{opacity:0;transform:scale(1.08)}
+#promo-switch:checked~.promo__stage .promo__v1{opacity:0;transform:scale(1.08)}
+#promo-switch:checked~.promo__stage .promo__v2{opacity:1;transform:scale(1)}
+.promo__btn{
+  position:absolute;right:22px;bottom:22px;z-index:5;cursor:pointer;
+  display:inline-flex;align-items:center;gap:9px;color:#fff;font-weight:700;font-size:14px;
+  background:rgba(11,16,38,.55);border:1px solid rgba(255,255,255,.3);
+  padding:12px 20px;border-radius:99px;backdrop-filter:blur(8px);transition:.25s;
+}
+.promo__btn:hover{background:var(--grad);border-color:transparent}
+.promo__btn .to-next{display:inline}
+.promo__btn .to-prev{display:none}
+#promo-switch:checked~.promo__stage .promo__btn .to-next{display:none}
+#promo-switch:checked~.promo__stage .promo__btn .to-prev{display:inline}
+.promo__dots{position:absolute;left:22px;bottom:26px;z-index:5;display:flex;gap:8px}
+.promo__dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.45)}
+.promo__dots i:nth-child(1){background:var(--cyan)}
+#promo-switch:checked~.promo__stage .promo__dots i:nth-child(1){background:rgba(255,255,255,.45)}
+#promo-switch:checked~.promo__stage .promo__dots i:nth-child(2){background:var(--cyan)}
+
+/* ====================================================================
+   로그인 / 회원가입 모달 — checkbox(#m-login,#m-join)
+   ==================================================================== */
+.modal-toggle{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
+.modal{
+  position:fixed;inset:0;z-index:1500;display:grid;place-items:center;padding:24px;
+  opacity:0;visibility:hidden;transition:.3s;
+}
+.modal__backdrop{position:absolute;inset:0;background:rgba(7,10,28,.6);backdrop-filter:blur(4px)}
+.modal__panel{
+  position:relative;width:100%;max-width:420px;background:#fff;border-radius:22px;
+  padding:38px 34px;box-shadow:var(--shadow);transform:translateY(20px) scale(.97);
+  transition:.35s cubic-bezier(.2,.8,.2,1);
+}
+#m-login:checked~.modal--login,
+#m-join:checked~.modal--join{opacity:1;visibility:visible}
+#m-login:checked~.modal--login .modal__panel,
+#m-join:checked~.modal--join .modal__panel{transform:none}
+.modal__close{
+  position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;
+  display:grid;place-items:center;color:var(--text-faint);font-size:20px;
+  background:var(--paper-2);transition:.2s;cursor:pointer;
+}
+.modal__close:hover{background:var(--magenta);color:#fff}
+.modal__brand{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.modal__brand svg{width:30px;height:30px}
+.modal__brand b{font-family:var(--display);font-size:18px;color:var(--ink)}
+.modal h3{font-family:var(--display);font-size:26px;font-weight:800;color:var(--ink);margin:14px 0 6px}
+.modal p.sub{font-size:14px;color:var(--text-soft);margin-bottom:24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--text-soft);margin-bottom:7px}
+.field input{
+  width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;
+  font-size:15px;color:var(--text);outline:none;transition:.2s;font-family:inherit;
+}
+.field input:focus{border-color:var(--violet);box-shadow:0 0 0 4px rgba(123,108,255,.12)}
+.btn-primary{
+  width:100%;padding:14px;border-radius:12px;font-weight:800;font-size:16px;color:#fff;
+  background:linear-gradient(120deg,var(--cyan),var(--violet) 60%,var(--magenta));
+  transition:.2s;margin-top:8px;
+}
+.btn-primary:hover{filter:brightness(1.07)}
+.modal__alt{text-align:center;margin-top:20px;font-size:14px;color:var(--text-soft)}
+.modal__alt label{color:var(--violet);font-weight:700;cursor:pointer}
+
+/* ====================================================================
+   서브페이지 (sub.html) — 3개 투어 선택 + 전환 + 이미지 hover
+   ==================================================================== */
+.sub-hero{
+  margin-top:var(--header-h);padding:90px 0 70px;text-align:center;color:#fff;
+  background:radial-gradient(120% 130% at 50% 0%,#1b2150,#070a1c 75%);
+}
+.sub-hero .eyebrow{color:var(--cyan)}
+.sub-hero h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,58px);letter-spacing:-.02em}
+.sub-hero p{color:rgba(255,255,255,.7);margin-top:16px;font-size:17px}
+.tour-select{padding:70px 0 110px}
+.tour-tabs{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:54px}
+.tour-tabs label{
+  padding:16px 30px;border-radius:99px;font-weight:700;font-size:16px;cursor:pointer;
+  border:1.5px solid var(--line);color:var(--text-soft);background:#fff;transition:.25s;
+}
+.tour-tabs label:hover{border-color:var(--violet);color:var(--ink)}
+#tour1:checked~.tour-tabs label[for=tour1],
+#tour2:checked~.tour-tabs label[for=tour2],
+#tour3:checked~.tour-tabs label[for=tour3]{
+  background:var(--grad);color:#fff;border-color:transparent;box-shadow:var(--shadow-sm);
+}
+.tour-panels{position:relative}
+.tour-panel{
+  opacity:0;visibility:hidden;position:absolute;inset:0;
+  transform:translateY(24px);transition:opacity .5s ease,transform .5s ease,visibility .5s;
+  pointer-events:none;
+}
+#tour1:checked~.tour-panels .tour-panel:nth-child(1),
+#tour2:checked~.tour-panels .tour-panel:nth-child(2),
+#tour3:checked~.tour-panels .tour-panel:nth-child(3){
+  opacity:1;visibility:visible;transform:none;position:relative;pointer-events:auto;
+}
+.tour-panel__intro{max-width:760px;margin:0 auto 44px;text-align:center}
+.tour-panel__intro h2{font-family:var(--display);font-size:32px;font-weight:800;color:var(--ink);margin-bottom:16px}
+.tour-panel__intro p{color:var(--text-soft);font-size:16px;line-height:1.8}
+.tour-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.tour-fig{
+  position:relative;height:420px;border-radius:var(--radius);overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.tour-fig img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease,filter .6s ease}
+.tour-fig:hover img{transform:scale(1.07)}
+.tour-fig__name{
+  position:absolute;inset:0;display:flex;align-items:flex-end;padding:26px;
+  background:linear-gradient(180deg,rgba(11,16,38,0) 45%,rgba(11,16,38,.82));
+  opacity:0;transition:opacity .4s ease;
+}
+.tour-fig:hover .tour-fig__name{opacity:1}
+.tour-fig__name span{
+  color:#fff;font-family:var(--display);font-size:22px;font-weight:800;
+  transform:translateY(14px);transition:transform .4s ease;
+}
+.tour-fig:hover .tour-fig__name span{transform:none}
+
+/* ====================================================================
+   반응형 — 480px 브레이크포인트 (메인페이지)
+   ==================================================================== */
+@media(max-width:900px){
+  .news-grid{grid-template-columns:1fr 1fr}
+  .guide-wrap{grid-template-columns:1fr}
+  .tour-gallery{grid-template-columns:1fr}
+  .tour-fig{height:300px}
+}
+@media(max-width:480px){
+  :root{--header-h:64px}
+  .wrap{padding:0 18px}
+  .section{padding:60px 0}
+
+  /* 햄버거 내비게이션 */
+  .gnb,.search,.header-tools .btn-auth{display:none}
+  .hamburger{
+    display:grid;place-items:center;margin-left:auto;width:44px;height:44px;
+    border-radius:10px;background:rgba(255,255,255,.12);z-index:1001;
+  }
+  .hamburger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;position:relative;transition:.3s}
+  .hamburger span::before,.hamburger span::after{
+    content:"";position:absolute;left:0;width:22px;height:2px;background:#fff;border-radius:2px;transition:.3s;
+  }
+  .hamburger span::before{top:-7px}.hamburger span::after{top:7px}
+  #nav-toggle:checked~.site-header .hamburger span{background:transparent}
+  #nav-toggle:checked~.site-header .hamburger span::before{top:0;transform:rotate(45deg)}
+  #nav-toggle:checked~.site-header .hamburger span::after{top:0;transform:rotate(-45deg)}
+
+  /* 모바일 내비 백드롭: 상단 바 이외 영역, 클릭 시 닫힘 */
+  .mobile-backdrop{
+    display:none;position:fixed;inset:0;top:var(--header-h);z-index:880;
+    background:rgba(7,10,28,.55);backdrop-filter:blur(3px);cursor:default;
+    opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s;
+  }
+  #nav-toggle:checked~.mobile-backdrop{display:block;opacity:1;visibility:visible}
+
+  /* 모바일 내비: 상단에서 내려오는 바 */
+  .mobile-nav{
+    position:fixed;top:var(--header-h);left:0;right:0;z-index:898;
+    background:rgba(10,14,32,.98);backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(255,255,255,.1);
+    box-shadow:0 18px 40px -16px rgba(0,0,0,.6);
+    padding:18px 22px 26px;display:flex;flex-direction:column;gap:4px;
+    transform:translateY(-110%);opacity:0;visibility:hidden;
+    transition:transform .42s cubic-bezier(.2,.85,.25,1),opacity .3s,visibility .42s;
+  }
+  #nav-toggle:checked~.mobile-nav{transform:translateY(0);opacity:1;visibility:visible}
+  .mobile-nav a{
+    color:#fff;font-size:19px;font-weight:700;padding:15px 14px;border-radius:12px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    opacity:0;transform:translateY(-10px);
+  }
+  #nav-toggle:checked~.mobile-nav a{animation:navIn .4s ease forwards}
+  #nav-toggle:checked~.mobile-nav a:nth-child(1){animation-delay:.08s}
+  #nav-toggle:checked~.mobile-nav a:nth-child(2){animation-delay:.14s}
+  #nav-toggle:checked~.mobile-nav a:nth-child(3){animation-delay:.20s}
+  #nav-toggle:checked~.mobile-nav a:nth-child(4){animation-delay:.26s}
+  #nav-toggle:checked~.mobile-nav .mnav-auth{animation-delay:.32s}
+  @keyframes navIn{to{opacity:1;transform:none}}
+  .mnav-auth{display:flex;gap:10px;margin-top:16px}
+  .mnav-auth label{flex:1;text-align:center;padding:14px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer}
+  .mnav-auth .login{background:rgba(255,255,255,.12);color:#fff}
+  .mnav-auth .join{background:var(--grad);color:#fff}
+
+  .visual{height:78vh;min-height:480px}
+  .vis-caption{bottom:24%}
+  .news-grid{grid-template-columns:1fr}
+  .editor__track,
+  #ed1:checked~.editor__viewport .editor__track,
+  #ed2:checked~.editor__viewport .editor__track,
+  #ed3:checked~.editor__viewport .editor__track,
+  #ed4:checked~.editor__viewport .editor__track,
+  #ed5:checked~.editor__viewport .editor__track,
+  #ed6:checked~.editor__viewport .editor__track,
+  #ed7:checked~.editor__viewport .editor__track,
+  #ed8:checked~.editor__viewport .editor__track{
+    transform:none;overflow-x:auto;padding-bottom:10px;
+  }
+  .ed-card{width:78vw;flex-basis:78vw;height:380px;filter:none;transform:none}
+  .ed-card__cap{opacity:1;transform:none}
+  .section-head{flex-direction:column;align-items:flex-start}
+}
+
+/* 접근성: 모션 최소화 */
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;transition-duration:.01ms!important}
+  .loader{animation:loaderOut .3s ease 5s forwards}
+  .loader__bar::after{animation:load 5s ease forwards}
+}

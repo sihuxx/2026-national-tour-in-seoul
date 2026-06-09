@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>투어 in 서울 — 당신만을 위한 서울 맞춤 투어</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<!-- ============ 로딩 페이지 (약 5초) ============ -->
+<div class="loader" aria-hidden="true">
+  <div class="loader__inner">
+    <div class="loader__mark">투어 <span class="in">in</span> 서울</div>
+    <div class="loader__skyline">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="loader__bar"></div>
+    <div class="loader__cap">Seoul After Dark</div>
+  </div>
+</div>
+
+<!-- ============ 모바일 내비 토글 (햄버거 상태) ============ -->
+<input type="checkbox" id="nav-toggle" class="nav-toggle" hidden>
+
+<!-- ============ 로그인 / 회원가입 모달 토글 ============ -->
+<input type="checkbox" id="m-login" class="modal-toggle" hidden>
+<input type="checkbox" id="m-join" class="modal-toggle" hidden>
+
+<!-- ============ 헤더 (고정) ============ -->
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand" title="투어 in 서울 메인으로">
+      <svg class="brand__symbol" viewBox="0 0 124 124" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs><linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#36e0d4"/><stop offset=".55" stop-color="#7b6cff"/><stop offset="1" stop-color="#ff4d8d"/>
+        </linearGradient></defs>
+        <circle cx="62" cy="62" r="58" fill="none" stroke="url(#bg1)" stroke-width="5"/>
+        <g fill="url(#bg1)">
+          <rect x="30" y="58" width="9" height="34" rx="2"/><rect x="43" y="42" width="11" height="50" rx="2"/>
+          <rect x="58" y="30" width="8" height="62" rx="2"/><path d="M62 22 l5 8 h-10 z"/>
+          <rect x="70" y="48" width="10" height="44" rx="2"/><rect x="84" y="62" width="9" height="30" rx="2"/>
+        </g>
+        <path d="M16 96 Q62 78 108 96" fill="none" stroke="#36e0d4" stroke-width="4" stroke-linecap="round"/>
+        <path d="M28 106 h68" stroke="#7b6cff" stroke-width="3" stroke-linecap="round" opacity=".65"/>
+        <path d="M40 114 h44" stroke="#ff4d8d" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+      </svg>
+      <span class="brand__text">투어 <span class="in">in</span> 서울</span>
+    </a>
+
+    <nav class="gnb" aria-label="주 메뉴">
+      <a href="sub.html">투어소개</a>
+      <a href="#">투어예약</a>
+      <a href="#">투어만들기</a>
+      <a href="#">행사등록</a>
+    </nav>
+
+    <div class="header-tools">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" placeholder="축제·행사 검색" aria-label="검색">
+      </div>
+      <label for="m-login" class="btn-auth">로그인</label>
+      <label for="m-join" class="btn-auth solid">회원가입</label>
+    </div>
+
+    <label for="nav-toggle" class="hamburger" aria-label="메뉴 열기/닫기"><span></span></label>
+  </div>
+</header>
+
+<!-- 모바일 내비 -->
+<!-- 모바일 내비 백드롭 (상단 바 이외 영역) -->
+<label for="nav-toggle" class="mobile-backdrop" aria-hidden="true"></label>
+<!-- 모바일 내비 (상단 바) -->
+<nav class="mobile-nav" aria-label="모바일 메뉴">
+  <a href="sub.html">투어소개</a>
+  <a href="#">투어예약</a>
+  <a href="#">투어만들기</a>
+  <a href="#">행사등록</a>
+  <div class="mnav-auth">
+    <label for="m-login" class="login">로그인</label>
+    <label for="m-join" class="join">회원가입</label>
+  </div>
+</nav>
+
+<main>
+  <!-- ============ 비주얼 영역 ============ -->
+  <section class="visual" aria-label="대표 비주얼">
+    <input type="radio" name="vis" id="vis1" class="visual__r" checked>
+    <input type="radio" name="vis" id="vis2" class="visual__r">
+    <input type="radio" name="vis" id="vis3" class="visual__r">
+    <input type="checkbox" id="vis-auto" class="visual__r">
+    <div class="visual__slides">
+      <div class="vis-slide">
+        <img src="../제공파일/B_Module/images/image (1).jpg" alt="한강 위로 펼쳐진 서울 불꽃축제 야경" title="한강 불꽃축제">
+        <div class="vis-caption">
+          <span class="tag">Seoul Custom Tour</span>
+          <h2>당신만을 위한,<br>나만의 서울 여행</h2>
+        </div>
+      </div>
+      <div class="vis-slide">
+        <img src="../제공파일/B_Module/images/image (3).jpg" alt="해질녘 서울 길거리 음식 시장 풍경" title="서울 길거리 투어">
+        <div class="vis-caption">
+          <span class="tag">Hidden Seoul</span>
+          <h2>숨은 서울 찾기,<br>맞춤형 힐링 여행</h2>
+        </div>
+      </div>
+      <div class="vis-slide">
+        <img src="../제공파일/B_Module/images/image (4).jpg" alt="밤에 빛나는 롯데월드타워와 서울 스카이라인" title="서울 야경">
+        <div class="vis-caption">
+          <span class="tag">Your Way</span>
+          <h2>취향대로 떠나는<br>서울 맞춤 투어</h2>
+        </div>
+      </div>
+    </div>
+    <div class="visual__ui">
+      <div class="vis-arrows">
+        <label for="vis3" class="vis-arrow vis-prev a1" aria-label="이전 슬라이드">‹</label>
+        <label for="vis1" class="vis-arrow vis-prev a2" aria-label="이전 슬라이드">‹</label>
+        <label for="vis2" class="vis-arrow vis-prev a3" aria-label="이전 슬라이드">‹</label>
+      </div>
+      <div class="vis-dots">
+        <label for="vis1" aria-label="1번 슬라이드"></label>
+        <label for="vis2" aria-label="2번 슬라이드"></label>
+        <label for="vis3" aria-label="3번 슬라이드"></label>
+      </div>
+      <div class="vis-arrows">
+        <label for="vis2" class="vis-arrow vis-next a1" aria-label="다음 슬라이드">›</label>
+        <label for="vis3" class="vis-arrow vis-next a2" aria-label="다음 슬라이드">›</label>
+        <label for="vis1" class="vis-arrow vis-next a3" aria-label="다음 슬라이드">›</label>
+      </div>
+      <label for="vis-auto" class="vis-toggle" title="자동/수동 전환">
+        <span class="knob"></span>
+        <span class="lbl-manual">자동재생</span>
+        <span class="lbl-auto">수동전환</span>
+      </label>
+    </div>
+  </section>
+
+  <!-- ============ 투어 소식 영역 ============ -->
+  <section class="section" aria-label="투어 소식">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Tour News</span>
+          <h2 class="section-title">지금 서울에서 만나는<br><span class="accent">투어 소식</span></h2>
+        </div>
+      </div>
+      <div class="news-grid">
+        <!-- 축제소식: 텍스트 리스트 + hover 하이라이트 -->
+        <article class="news-card">
+          <div class="news-card__head"><span class="ko">FESTIVAL</span><h3>축제소식</h3></div>
+          <ul class="news-list">
+            <li><a href="#"><span class="cat">[축제]</span>2026 한강 봄꽃 축제 및 여의도 벚꽃 트래킹 안내</a></li>
+            <li><a href="#"><span class="cat">[여행]</span>해치 아트벌룬 광화문 전시 및 도보 투어 포토존 가이드</a></li>
+            <li><a href="#"><span class="cat">[공연]</span>정동야행, 덕수궁 돌담길에서 만나는 달빛 음악회</a></li>
+            <li><a href="#"><span class="cat">[문화]</span>남산골 한옥마을 전통체험 10% 특별 할인권 증정</a></li>
+            <li><a href="#"><span class="cat">[여행]</span>서울 스테이 라운지 이용가이드 및 쉼터 안내</a></li>
+            <li><a href="#"><span class="cat">[축제]</span>서울 장미축제, 장충체육공원 버스킹 일정 및 주차팁</a></li>
+          </ul>
+          <div class="news-card__foot"><a href="#" class="more-link">더보기</a></div>
+        </article>
+        <!-- 행사일정 -->
+        <article class="news-card">
+          <div class="news-card__head"><span class="ko">SCHEDULE</span><h3>행사일정</h3></div>
+          <figure class="news-figure">
+            <img src="../제공파일/B_Module/투어소식/행사일정.jpg" alt="서울 맞춤투어 행사일정 안내 이미지" title="행사일정">
+            <div class="news-figure__overlay"><p>서울맞춤투어의 주요일정을 안내해 드립니다.</p></div>
+          </figure>
+          <div class="news-card__foot"><a href="#" class="more-link">더보기</a></div>
+        </article>
+        <!-- 프로그램 -->
+        <article class="news-card">
+          <div class="news-card__head"><span class="ko">PROGRAM</span><h3>프로그램</h3></div>
+          <figure class="news-figure">
+            <img src="../제공파일/B_Module/투어소식/프로그램.jpg" alt="투어 기간 다양한 프로그램 이미지" title="프로그램">
+            <div class="news-figure__overlay"><p>투어기간에 펼쳐지는 10개분야 50가지의 다양한 프로그램을 즐겨보세요</p></div>
+          </figure>
+          <div class="news-card__foot"><a href="#" class="more-link">더보기</a></div>
+        </article>
+        <!-- 서울여행 -->
+        <article class="news-card">
+          <div class="news-card__head"><span class="ko">TRAVEL</span><h3>서울여행</h3></div>
+          <figure class="news-figure">
+            <img src="../제공파일/B_Module/투어소식/서울여행.jpg" alt="조선왕조 수도 서울 여행 이미지" title="서울여행">
+            <div class="news-figure__overlay"><p>조선왕조 수도 서울에서 소중한 추억을 만들어 보세요</p></div>
+          </figure>
+          <div class="news-card__foot"><a href="#" class="more-link">더보기</a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 투어 안내 영역 (달력 + 탭) ============ -->
+  <section class="section section--tint" aria-label="투어 안내">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Tour Guide</span>
+          <h2 class="section-title">2026년 8월,<br><span class="accent">서울의 모든 행사</span></h2>
+        </div>
+      </div>
+      <div class="guide-wrap">
+        <!-- 달력 -->
+        <div class="calendar">
+          <div class="calendar__top"><h3>August</h3><span class="yr">2026</span></div>
+          <table>
+            <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="empty"><span></span></td><td class="empty"><span></span></td>
+                <td class="empty"><span></span></td><td class="empty"><span></span></td>
+                <td class="empty"><span></span></td>
+                <td class="sat has-event"><span>1</span></td>
+                <td class="sun"><span>2</span></td>
+              </tr>
+              <tr>
+                <td><span>3</span></td><td><span>4</span></td><td><span>5</span></td>
+                <td class="has-event"><span>6</span></td><td><span>7</span></td><td><span>8</span></td>
+                <td class="sat"><span>9</span></td>
+              </tr>
+              <tr>
+                <td class="sun"><span>10</span></td><td><span>11</span></td><td><span>12</span></td>
+                <td><span>13</span></td><td><span>14</span></td><td><span>15</span></td>
+                <td class="sat has-event"><span>16</span></td>
+              </tr>
+              <tr>
+                <td class="sun"><span>17</span></td><td><span>18</span></td><td><span>19</span></td>
+                <td class="has-event"><span>20</span></td><td><span>21</span></td><td><span>22</span></td>
+                <td class="sat"><span>23</span></td>
+              </tr>
+              <tr>
+                <td class="sun"><span>24</span></td><td><span>25</span></td><td><span>26</span></td>
+                <td class="has-event"><span>27</span></td><td class="has-event"><span>28</span></td>
+                <td class="has-event"><span>29</span></td><td class="sat has-event"><span>30</span></td>
+              </tr>
+              <tr>
+                <td class="sun has-event"><span>31</span></td>
+                <td class="empty"><span></span></td><td class="empty"><span></span></td>
+                <td class="empty"><span></span></td><td class="empty"><span></span></td>
+                <td class="empty"><span></span></td><td class="empty"><span></span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="cal-legend"><span><i></i>축제&행사 · 전시&공연이 있는 날</span></div>
+        </div>
+
+        <!-- 탭 -->
+        <div class="guide-tabs">
+          <input type="radio" name="gt" id="gt-all" hidden checked>
+          <input type="radio" name="gt" id="gt-fest" hidden>
+          <input type="radio" name="gt" id="gt-show" hidden>
+          <div class="guide-tabs__nav">
+            <label for="gt-all">전체</label>
+            <label for="gt-fest">축제&amp;행사</label>
+            <label for="gt-show">전시&amp;공연</label>
+          </div>
+          <div class="guide-tabs__body">
+            <ul class="guide-panel panel-all">
+              <li><span class="ev-name"><span class="ev-badge fest">축제&amp;행사</span>2026 핸드아티코리아</span><span class="ev-date">08.01 ~ 08.16</span></li>
+              <li><span class="ev-name"><span class="ev-badge fest">축제&amp;행사</span>AI 인사이트 공연문화콘텐츠 기획</span><span class="ev-date">05.12 ~ 08.06</span></li>
+              <li><span class="ev-name"><span class="ev-badge fest">축제&amp;행사</span>오염코드404: 비점오염원을 찾아라!</span><span class="ev-date">04.07 ~ 08.30</span></li>
+              <li><span class="ev-name"><span class="ev-badge fest">축제&amp;행사</span>[박인홍 작가] 스테들러와 함께하는 여행드로잉 클래스</span><span class="ev-date">03.31 ~ 08.31</span></li>
+              <li><span class="ev-name"><span class="ev-badge fest">축제&amp;행사</span>[이승익 작가] 스테들러와 함께하는 여행드로잉 클래스</span><span class="ev-date">03.28 ~ 08.29</span></li>
+              <li><span class="ev-name"><span class="ev-badge fest">축제&amp;행사</span>2026년 문화소외층·시니어 대상 [기록으로 기억을 잇다!]</span><span class="ev-date">03.01 ~ 08.31</span></li>
+              <li><span class="ev-name"><span class="ev-badge show">전시&amp;공연</span>고소미 개인전 [다양체]</span><span class="ev-date">02.24 ~ 08.20</span></li>
+              <li><span class="ev-name"><span class="ev-badge show">전시&amp;공연</span>마인드붐 서울 2025 : 잃어버린 행운 보관소</span><span class="ev-date">08.01 ~ 08.27</span></li>
+              <li><span class="ev-name"><span class="ev-badge show">전시&amp;공연</span>서울일러스트레이션페어 V.20</span><span class="ev-date">08.01 ~ 08.28</span></li>
+            </ul>
+            <ul class="guide-panel panel-fest">
+              <li><span class="ev-name">2026 핸드아티코리아</span><span class="ev-date">08.01 ~ 08.16</span></li>
+              <li><span class="ev-name">AI 인사이트 공연문화콘텐츠 기획</span><span class="ev-date">05.12 ~ 08.06</span></li>
+              <li><span class="ev-name">오염코드404: 비점오염원을 찾아라!</span><span class="ev-date">04.07 ~ 08.30</span></li>
+              <li><span class="ev-name">[박인홍 작가] 스테들러와 함께하는 여행드로잉 클래스</span><span class="ev-date">03.31 ~ 08.31</span></li>
+              <li><span class="ev-name">[이승익 작가] 스테들러와 함께하는 여행드로잉 클래스</span><span class="ev-date">03.28 ~ 08.29</span></li>
+              <li><span class="ev-name">2026년 문화소외층·시니어 대상 [기록으로 기억을 잇다!]</span><span class="ev-date">03.01 ~ 08.31</span></li>
+            </ul>
+            <ul class="guide-panel panel-show">
+              <li><span class="ev-name">고소미 개인전 [다양체]</span><span class="ev-date">02.24 ~ 08.20</span></li>
+              <li><span class="ev-name">마인드붐 서울 2025 : 잃어버린 행운 보관소 LOST AND LUCKY</span><span class="ev-date">08.01 ~ 08.27</span></li>
+              <li><span class="ev-name">서울일러스트레이션페어 V.20</span><span class="ev-date">08.01 ~ 08.28</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 에디터 추천여행 영역 ============ -->
+  <section class="section editor" aria-label="에디터 추천여행">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Editor's Pick</span>
+          <h2 class="section-title">에디터가 다녀온<br><span class="accent">서울의 여덟 장면</span></h2>
+        </div>
+      </div>
+    </div>
+    <input type="radio" name="ed" id="ed1" class="editor__radios" checked>
+    <input type="radio" name="ed" id="ed2" class="editor__radios">
+    <input type="radio" name="ed" id="ed3" class="editor__radios">
+    <input type="radio" name="ed" id="ed4" class="editor__radios">
+    <input type="radio" name="ed" id="ed5" class="editor__radios">
+    <input type="radio" name="ed" id="ed6" class="editor__radios">
+    <input type="radio" name="ed" id="ed7" class="editor__radios">
+    <input type="radio" name="ed" id="ed8" class="editor__radios">
+    <div class="editor__viewport">
+      <div class="editor__track">
+        <label for="ed1" class="ed-card">
+          <img src="../제공파일/B_Module/추천여행/01_이화여자대학교.jpg" alt="이화여자대학교 유럽식 정원 풍경" title="이화여자대학교">
+          <div class="ed-card__cap"><span class="no">EDITOR 01</span><h4>이화여자대학교</h4><p>언덕 위 이화교회의 뾰족한 지붕이 푸른 하늘과 가을 나뭇잎 사이에서 영화의 오프닝처럼 빛난다.</p></div>
+        </label>
+        <label for="ed2" class="ed-card">
+          <img src="../제공파일/B_Module/추천여행/02_홍제천.jpg" alt="홍제천 인공폭포" title="홍제천">
+          <div class="ed-card__cap"><span class="no">EDITOR 02</span><h4>홍제천</h4><p>높이 25m, 폭 60m. 인공이라 믿기지 않을 만큼 자연과 어우러진 도심 속 폭포.</p></div>
+        </label>
+        <label for="ed3" class="ed-card">
+          <img src="../제공파일/B_Module/추천여행/03_가락시장.jpg" alt="가락시장 수산시장 풍경" title="가락시장">
+          <div class="ed-card__cap"><span class="no">EDITOR 03</span><h4>가락시장</h4><p>40여 년 역사의 서울 최대 수산시장. 제철 해산물로 활기 넘치는 송파의 새벽.</p></div>
+        </label>
+        <label for="ed4" class="ed-card">
+          <img src="../제공파일/B_Module/추천여행/04_데몬헌터스.jpg" alt="K-POP 데몬헌터스 서울 배경" title="K-POP DEMON HUNTERS">
+          <div class="ed-card__cap"><span class="no">EDITOR 04</span><h4>K-POP DEMON HUNTERS</h4><p>서울을 무대로 한 액션 판타지. 미래적 에너지와 깊은 전통이 어우러진 도시의 매력.</p></div>
+        </label>
+        <label for="ed5" class="ed-card">
+          <img src="../제공파일/B_Module/추천여행/05_수락휴.jpg" alt="수락산 자락 수락휴 힐링 공간" title="수락휴">
+          <div class="ed-card__cap"><span class="no">EDITOR 05</span><h4>수락휴</h4><p>노원구 수락산 자락의 고요한 숲속 힐링 공간. 도심에서 택시로 40분이면 닿는다.</p></div>
+        </label>
+        <label for="ed6" class="ed-card">
+          <img src="../제공파일/B_Module/추천여행/06_국립현대미술관.jpg" alt="국립현대미술관 서울관" title="국립현대미술관">
+          <div class="ed-card__cap"><span class="no">EDITOR 06</span><h4>국립현대미술관</h4><p>북촌 한옥과 유리 건물이 맞닿는 곳. 현대와 전통이 교차하는 경계선.</p></div>
+        </label>
+        <label for="ed7" class="ed-card">
+          <img src="../제공파일/B_Module/추천여행/07_선유도공원.jpg" alt="선유도공원 한강 정원" title="선유도공원">
+          <div class="ed-card__cap"><span class="no">EDITOR 07</span><h4>선유도공원</h4><p>양화대교 남단, 물과 정원·전시·휴식이 어우러진 한강공원. 주민처럼 살아보는 여행.</p></div>
+        </label>
+        <label for="ed8" class="ed-card">
+          <img src="../제공파일/B_Module/추천여행/08_북한산백운대.jpg" alt="북한산 백운대 정상" title="북한산 백운대">
+          <div class="ed-card__cap"><span class="no">EDITOR 08</span><h4>북한산 백운대</h4><p>높이 837m, 서울에서 가장 높은 봉우리. '북한산 정상'은 곧 이곳을 가리킨다.</p></div>
+        </label>
+      </div>
+    </div>
+    <p class="editor__hint">이미지를 클릭하면 가운데로 이동하며 자세한 이야기가 펼쳐집니다.</p>
+  </section>
+
+  <!-- ============ 투어 홍보영상 영역 ============ -->
+  <section class="section section--tint promo" aria-label="투어 홍보영상">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Promotion</span>
+          <h2 class="section-title">영상으로 미리 만나는<br><span class="accent">서울 투어</span></h2>
+        </div>
+      </div>
+    </div>
+    <input type="checkbox" id="promo-switch" hidden>
+    <div class="promo__stage">
+      <div class="promo__video promo__v1">
+        <video src="../제공파일/B_Module/홍보영상/1.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="promo__video promo__v2">
+        <video src="../제공파일/B_Module/홍보영상/2.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <div class="promo__dots"><i></i><i></i></div>
+      <label for="promo-switch" class="promo__btn">
+        <span class="to-next">다음영상보기 ›</span>
+        <span class="to-prev">‹ 이전영상보기</span>
+      </label>
+    </div>
+  </section>
+</main>
+
+<!-- ============ 푸터 ============ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-info">
+      <a href="index.html" class="footer-brand" title="투어 in 서울 메인으로">
+        <svg width="40" height="40" viewBox="0 0 124 124" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="fg1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#36e0d4"/><stop offset=".55" stop-color="#7b6cff"/><stop offset="1" stop-color="#ff4d8d"/>
+          </linearGradient></defs>
+          <circle cx="62" cy="62" r="58" fill="none" stroke="url(#fg1)" stroke-width="5"/>
+          <g fill="url(#fg1)"><rect x="30" y="58" width="9" height="34" rx="2"/><rect x="43" y="42" width="11" height="50" rx="2"/><rect x="58" y="30" width="8" height="62" rx="2"/><path d="M62 22 l5 8 h-10 z"/><rect x="70" y="48" width="10" height="44" rx="2"/><rect x="84" y="62" width="9" height="30" rx="2"/></g>
+          <path d="M16 96 Q62 78 108 96" fill="none" stroke="#36e0d4" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+        <span class="brand__text">투어 <span class="in">in</span> 서울</span>
+      </a>
+      <p>운영 : 월~금, 오전 9시~오후 6시 &nbsp;staff@visitseoul.net<br>
+         문의 : 여행자 지원센터 1330<br>
+         03190, 서울특별시 종로구 청계천로85</p>
+      <p class="copy">© 2024 Seoul Tourism Organization. All rights reserved</p>
+    </div>
+    <div class="footer-social">
+      <a href="#" aria-label="인스타그램" title="인스타그램"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.07 1.2.05 1.8.25 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.15.4.35 1 .4 2.2.07 1.2.07 1.6.07 4.8s0 3.6-.07 4.8c-.05 1.2-.25 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.15-1 .35-2.2.4-1.2.07-1.6.07-4.8.07s-3.6 0-4.8-.07c-1.2-.05-1.8-.25-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.15-.4-.35-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.8c.05-1.2.25-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.15 1-.35 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.07-.9.04-1.4.2-1.7.3-.4.17-.7.37-1 .67-.3.3-.5.6-.67 1-.1.3-.26.8-.3 1.7C3.8 8.5 3.8 8.9 3.8 12s0 3.5.07 4.7c.04.9.2 1.4.3 1.7.17.4.37.7.67 1 .3.3.6.5 1 .67.3.1.8.26 1.7.3 1.2.07 1.6.07 4.7.07s3.5 0 4.7-.07c.9-.04 1.4-.2 1.7-.3.4-.17.7-.37 1-.67.3-.3.5-.6.67-1 .1-.3.26-.8.3-1.7.07-1.2.07-1.6.07-4.7s0-3.5-.07-4.7c-.04-.9-.2-1.4-.3-1.7-.17-.4-.37-.7-.67-1-.3-.3-.6-.5-1-.67-.3-.1-.8-.26-1.7-.3C15.5 4 15.1 4 12 4zm0 3.1a4.9 4.9 0 110 9.8 4.9 4.9 0 010-9.8zm0 1.8a3.1 3.1 0 100 6.2 3.1 3.1 0 000-6.2zm5.1-.3a1.15 1.15 0 110 2.3 1.15 1.15 0 010-2.3z"/></svg></a>
+      <a href="#" aria-label="페이스북" title="페이스북"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.5-1.5h1.7V3.6c-.3 0-1.3-.13-2.46-.13-2.43 0-4.1 1.48-4.1 4.2v2.34H7.3V13h2.84v8h3.36z"/></svg></a>
+      <a href="#" aria-label="유튜브" title="유튜브"><svg viewBox="0 0 24 24"><path d="M23 7.5a3 3 0 00-2.1-2.1C19 4.9 12 4.9 12 4.9s-7 0-8.9.5A3 3 0 001 7.5C.5 9.4.5 12 .5 12s0 2.6.5 4.5a3 3 0 002.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 002.1-2.1c.5-1.9.5-4.5.5-4.5s0-2.6-.5-4.5zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg></a>
+      <a href="#" aria-label="엑스" title="엑스(트위터)"><svg viewBox="0 0 24 24"><path d="M17.5 3h3l-6.6 7.5L21.8 21h-6l-4.7-6.1L5.7 21H2.6l7-8L2.2 3h6.2l4.2 5.6L17.5 3zm-1 16h1.7L7.6 4.7H5.8L16.5 19z"/></svg></a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ 로그인 모달 ============ -->
+<div class="modal modal--login" role="dialog" aria-modal="true" aria-label="로그인">
+  <label for="m-login" class="modal__backdrop" aria-hidden="true"></label>
+  <div class="modal__panel">
+    <label for="m-login" class="modal__close" aria-label="닫기">×</label>
+    <div class="modal__brand">
+      <svg viewBox="0 0 124 124" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#36e0d4"/><stop offset=".55" stop-color="#7b6cff"/><stop offset="1" stop-color="#ff4d8d"/></linearGradient></defs>
+        <circle cx="62" cy="62" r="58" fill="none" stroke="url(#lg1)" stroke-width="6"/>
+        <g fill="url(#lg1)"><rect x="30" y="58" width="9" height="34" rx="2"/><rect x="43" y="42" width="11" height="50" rx="2"/><rect x="58" y="30" width="8" height="62" rx="2"/><path d="M62 22 l5 8 h-10 z"/><rect x="70" y="48" width="10" height="44" rx="2"/><rect x="84" y="62" width="9" height="30" rx="2"/></g>
+      </svg>
+      <b>투어 in 서울</b>
+    </div>
+    <h3>로그인</h3>
+    <p class="sub">나만의 서울 투어를 이어서 계획해 보세요.</p>
+    <div class="field"><label for="login-id">아이디</label><input type="text" id="login-id" placeholder="아이디를 입력하세요"></div>
+    <div class="field"><label for="login-pw">비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호를 입력하세요"></div>
+    <button type="button" class="btn-primary">로그인</button>
+    <p class="modal__alt">아직 회원이 아니신가요? <label for="m-join">회원가입</label></p>
+  </div>
+</div>
+
+<!-- ============ 회원가입 모달 ============ -->
+<div class="modal modal--join" role="dialog" aria-modal="true" aria-label="회원가입">
+  <label for="m-join" class="modal__backdrop" aria-hidden="true"></label>
+  <div class="modal__panel">
+    <label for="m-join" class="modal__close" aria-label="닫기">×</label>
+    <div class="modal__brand">
+      <svg viewBox="0 0 124 124" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs><linearGradient id="jg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#36e0d4"/><stop offset=".55" stop-color="#7b6cff"/><stop offset="1" stop-color="#ff4d8d"/></linearGradient></defs>
+        <circle cx="62" cy="62" r="58" fill="none" stroke="url(#jg1)" stroke-width="6"/>
+        <g fill="url(#jg1)"><rect x="30" y="58" width="9" height="34" rx="2"/><rect x="43" y="42" width="11" height="50" rx="2"/><rect x="58" y="30" width="8" height="62" rx="2"/><path d="M62 22 l5 8 h-10 z"/><rect x="70" y="48" width="10" height="44" rx="2"/><rect x="84" y="62" width="9" height="30" rx="2"/></g>
+      </svg>
+      <b>투어 in 서울</b>
+    </div>
+    <h3>회원가입</h3>
+    <p class="sub">서울의 축제와 투어를 가장 가까이서 만나보세요.</p>
+    <div class="field"><label for="join-id">아이디</label><input type="text" id="join-id" placeholder="아이디 (4자 이상)"></div>
+    <div class="field"><label for="join-pw">비밀번호</label><input type="password" id="join-pw" placeholder="영문+숫자 5자 이상"></div>
+    <div class="field"><label for="join-name">이름</label><input type="text" id="join-name" placeholder="이름을 입력하세요"></div>
+    <button type="button" class="btn-primary">가입</button>
+    <p class="modal__alt">이미 계정이 있으신가요? <label for="m-login">로그인</label></p>
+  </div>
+</div>
+
+</body>
+</html>
