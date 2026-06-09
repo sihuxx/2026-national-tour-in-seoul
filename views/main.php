@@ -1,11 +1,11 @@
 <!-- 로딩 (약 5초) -->
-<div class="loader">
+<!-- <div class="loader">
   <div class="loader__box">
     <div class="loader__title">투어 in 서울</div>
     <div class="loader__bar"></div>
     <div class="loader__cap">SEOUL CUSTOM TOUR</div>
   </div>
-</div>
+</div> -->
 
 <!-- 비주얼 -->
 <section class="visual">
