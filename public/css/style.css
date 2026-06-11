@@ -1,88 +1,277 @@
-@charset "UTF-8";
+
 /* ===========================================================
-   투어 in 서울 — B Module  (HTML + CSS only, no JavaScript)
-   디자인: 화이트/블랙/그레이 + 보더. 기능 중심 미니멀.
+   components.css — 기능별 CSS (JavaScript 미사용)
+   모든 인터랙션은 radio/checkbox :checked 로 구현
    =========================================================== */
 
-:root{
-  --bg:#ffffff;
-  --fg:#111111;          /* 본문 */
-  --muted:#666666;       /* 보조 텍스트 */
-  --faint:#999999;
-  --line:#dddddd;        /* 기본 보더 */
-  --line-strong:#111111;
-  --hover:#f4f4f4;       /* 옅은 회색 배경 */
-  --panel:#fafafa;
-  --maxw:1200px;
-  --header-h:64px;
-  --sans:"Pretendard","Noto Sans KR",-apple-system,sans-serif;
+/* ====================================================
+   비주얼 — 3장 슬라이드 / 자동·수동 토글 / 독립 텍스트
+   ==================================================== */
+.visual{position:relative;height:440px;margin-top:var(--header-h);border-bottom:1px solid var(--line)}
+.visual__r{position:absolute;opacity:0;width:0;height:0}
+
+.visual__slides{position:absolute;inset:0;overflow:hidden}
+.vis-slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .6s}
+.vis-slide img{width:100%;height:100%;object-fit:cover}
+.vis-slide::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.12)}
+.vis-cap{position:absolute;left:0;right:0;bottom:64px;text-align:center;z-index:2}
+.vis-cap span{display:inline-block;background:#111;color:#fff;font-size:20px;font-weight:700;padding:10px 18px}
+
+/* 수동: 선택된 라디오의 슬라이드 표시 */
+#vis1:checked~.visual__slides .vis-slide:nth-child(1),
+#vis2:checked~.visual__slides .vis-slide:nth-child(2),
+#vis3:checked~.visual__slides .vis-slide:nth-child(3){opacity:1;visibility:visible}
+
+/* 자동: 토글 ON → keyframes 순환 (한 장 3.6s, 전환 4초 이내) */
+#vis-auto:checked~.visual__slides .vis-slide{
+  visibility:visible;animation:visAuto 10.8s infinite;
+}
+#vis-auto:checked~.visual__slides .vis-slide:nth-child(1){animation-delay:0s}
+#vis-auto:checked~.visual__slides .vis-slide:nth-child(2){animation-delay:3.6s}
+#vis-auto:checked~.visual__slides .vis-slide:nth-child(3){animation-delay:7.2s}
+@keyframes visAuto{0%{opacity:0}3%{opacity:1}30%{opacity:1}36%{opacity:0}100%{opacity:0}}
+
+/* 컨트롤 바 */
+.vis-ui{position:absolute;left:0;right:0;bottom:16px;z-index:3;display:flex;justify-content:center;align-items:center;gap:12px}
+.vis-arrow{width:36px;height:36px;border:1px solid #111;background:#fff;display:grid;place-items:center;cursor:pointer}
+.vis-arrow:hover{background:#111;color:#fff}
+.vis-arrows{position:relative;width:36px;height:36px}
+.vis-arrows .vis-arrow{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none}
+#vis1:checked~.vis-ui .vis-arrow.a1,
+#vis2:checked~.vis-ui .vis-arrow.a2,
+#vis3:checked~.vis-ui .vis-arrow.a3{opacity:1;visibility:visible;pointer-events:auto}
+#vis-auto:checked~.vis-ui .vis-arrows{visibility:hidden}
+.vis-dots{display:flex;gap:6px}
+.vis-dots label{width:10px;height:10px;border:1px solid #111;background:#fff;cursor:pointer}
+#vis1:checked~.vis-ui .vis-dots label:nth-child(1),
+#vis2:checked~.vis-ui .vis-dots label:nth-child(2),
+#vis3:checked~.vis-ui .vis-dots label:nth-child(3){background:#111}
+.vis-toggle{display:inline-flex;align-items:center;gap:6px;border:1px solid #111;background:#fff;padding:6px 10px;font-size:12px;cursor:pointer}
+.vis-toggle .lbl-auto{display:none}
+#vis-auto:checked~.vis-ui .vis-toggle .lbl-auto{display:inline}
+#vis-auto:checked~.vis-ui .vis-toggle .lbl-manual{display:none}
+#vis-auto:checked~.vis-ui .vis-toggle{background:#111;color:#fff}
+#vis-auto:checked~.vis-ui .vis-arrow {display: none;}
+#vis-auto:checked~.vis-ui .vis-dots {display: none;}
+
+/* ====================================================
+   투어 소식 — 4영역
+   ==================================================== */
+.news-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.news-card{border:1px solid var(--line);display:flex;flex-direction:column}
+.news-card h3{font-size:16px;font-weight:700;padding:14px 14px 8px;border-bottom:1px solid var(--line)}
+/* 축제소식: 텍스트 리스트 + hover 하이라이트 */
+.news-list{padding:6px;flex:1}
+.news-list li a{display:block;padding:9px 8px;font-size:13px;color:var(--muted);line-height:1.4}
+.news-list li a:hover{background:var(--hover);color:#111}
+.news-list .cat{font-weight:700;color:#111}
+/* 이미지 영역: hover 시 텍스트 등장 */
+.news-fig{position:relative;flex:1;min-height:200px;overflow:hidden}
+.news-fig img{width:100%;height:100%;object-fit:cover}
+.news-fig__txt{position:absolute;inset:0;display:flex;align-items:flex-end;padding:14px;background:rgba(255,255,255,.9);opacity:0;transition:opacity .25s}
+.news-fig:hover .news-fig__txt{opacity:1}
+.news-fig__txt p{font-size:13px;color:#111}
+.news-card__foot{padding:12px 14px;border-top:1px solid var(--line)}
+
+/* ====================================================
+   투어 안내 — 달력(2026.08) + 탭
+   ==================================================== */
+.guide{display:flex;gap:20px;align-items:flex-start;width:100%}
+.guide .calendar{flex:0 1 60%;min-width:0}
+.guide .tabs{flex:0 1 40%;min-width:0}
+.calendar{border:1px solid var(--line);padding:18px;}
+.calendar__top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.calendar__top b{font-size:18px}
+.calendar__top span{font-size:12px;color:var(--faint)}
+.calendar table{width:100%;border-collapse:collapse;table-layout:fixed}
+.calendar th{font-size:12px;color:var(--muted);font-weight:600;padding:6px 0}
+.calendar td{height:40px;text-align:center;vertical-align:middle;position:relative;font-size:13px}
+.calendar td.empty{color:transparent}
+.calendar td.event{font-weight:700}
+.calendar td.event::after{content:"";position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:4px;height:4px;background:#111;border-radius:50%}
+.calendar__days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:0;margin-bottom:8px}
+.calendar__days-header div{text-align:center;font-weight:600;font-size:12px;color:var(--muted);padding:6px 0}
+.calendar__grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0}
+.calendar__grid > div{height:40px;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;font-size:13px}
+.calendar__grid .empty{color:transparent}
+.calendar__grid .event{font-weight:700}
+.calendar__grid .event::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:#111;border-radius:50%}
+.cal-legend{margin-top:12px;font-size:12px;color:var(--muted);display: flex;justify-content: space-between;align-items: center;}
+.cal-legend i{display:inline-block;width:4px;height:4px;background:#111;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+.tabs{border:1px solid var(--line);}
+.tabs__nav{display:flex;border-bottom:1px solid var(--line)}
+.tabs__nav label{flex:1;text-align:center;padding:12px 6px;font-size:14px;color:var(--muted);cursor:pointer;border-right:1px solid var(--line)}
+.tabs__nav label:last-child{border-right:none}
+.tabs__nav label:hover{background:var(--hover)}
+.panel{display:none;padding:6px 14px 14px;max-height:340px;overflow-y:auto}
+.panel li{display:flex;justify-content:space-between;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line);font-size:13px}
+.panel li:last-child{border-bottom:none}
+.panel .badge{border:1px solid var(--line);font-size:11px;padding:1px 6px;margin-right:6px;color:var(--muted)}
+.panel .date{color:var(--faint);white-space:nowrap}
+.tabs__nav label.active {color:#111;font-weight:700;background:var(--hover)}
+#gt-all:checked~.tabs__body .panel-all,
+#gt-fest:checked~.tabs__body .panel-fest,
+#gt-show:checked~.tabs__body .panel-show{display:block}
+
+/* ====================================================
+   에디터 추천여행 — 8장 가로, 클릭으로 가운데 정렬
+   ==================================================== */
+.editor__r{position:absolute;opacity:0;width:0;height:0}
+.editor__vp{overflow:hidden;border:1px solid var(--line)}
+.editor__track{display:flex;width:max-content;transition:transform .5s ease;transform:translateX(calc(50vw - 160px))}
+.ed-card{width:320px;flex:0 0 320px;height:300px;position:relative;cursor:pointer;border-right:1px solid var(--line);display:block}
+.ed-card:last-child{border-right:none}
+.ed-card img{width:100%;height:100%;object-fit:cover;opacity:.5;transition:opacity .4s}
+.ed-card__cap{position:absolute;left:0;right:0;bottom:0;padding:14px;background:rgba(255,255,255,.95);border-top:1px solid var(--line);opacity:0;transition:opacity .4s}
+.ed-card__cap b{display:block;font-size:15px;margin-bottom:4px}
+.ed-card__cap p{font-size:12px;color:var(--muted);line-height:1.4}
+/* 트랙 이동 + 선택 카드 강조 (카드폭 320, 보더 1 → 321) */
+#ed1:checked~.editor__vp .editor__track{transform:translateX(calc(50vw - 160px - 0px))}
+#ed2:checked~.editor__vp .editor__track{transform:translateX(calc(50vw - 160px - 321px))}
+#ed3:checked~.editor__vp .editor__track{transform:translateX(calc(50vw - 160px - 642px))}
+#ed4:checked~.editor__vp .editor__track{transform:translateX(calc(50vw - 160px - 963px))}
+#ed5:checked~.editor__vp .editor__track{transform:translateX(calc(50vw - 160px - 1284px))}
+#ed6:checked~.editor__vp .editor__track{transform:translateX(calc(50vw - 160px - 1605px))}
+#ed7:checked~.editor__vp .editor__track{transform:translateX(calc(50vw - 160px - 1926px))}
+#ed8:checked~.editor__vp .editor__track{transform:translateX(calc(50vw - 160px - 2247px))}
+#ed1:checked~.editor__vp .ed-card:nth-child(1) img,
+#ed2:checked~.editor__vp .ed-card:nth-child(2) img,
+#ed3:checked~.editor__vp .ed-card:nth-child(3) img,
+#ed4:checked~.editor__vp .ed-card:nth-child(4) img,
+#ed5:checked~.editor__vp .ed-card:nth-child(5) img,
+#ed6:checked~.editor__vp .ed-card:nth-child(6) img,
+#ed7:checked~.editor__vp .ed-card:nth-child(7) img,
+#ed8:checked~.editor__vp .ed-card:nth-child(8) img{opacity:1}
+#ed1:checked~.editor__vp .ed-card:nth-child(1) .ed-card__cap,
+#ed2:checked~.editor__vp .ed-card:nth-child(2) .ed-card__cap,
+#ed3:checked~.editor__vp .ed-card:nth-child(3) .ed-card__cap,
+#ed4:checked~.editor__vp .ed-card:nth-child(4) .ed-card__cap,
+#ed5:checked~.editor__vp .ed-card:nth-child(5) .ed-card__cap,
+#ed6:checked~.editor__vp .ed-card:nth-child(6) .ed-card__cap,
+#ed7:checked~.editor__vp .ed-card:nth-child(7) .ed-card__cap,
+#ed8:checked~.editor__vp .ed-card:nth-child(8) .ed-card__cap{opacity:1}
+.editor__hint{margin-top:12px;font-size:12px;color:var(--faint);text-align:center}
+
+/* ====================================================
+   투어 홍보영상 — 1.mp4 / 2.mp4 전환
+   ==================================================== */
+.promo__stage{position:relative;max-width:900px;margin:0 auto;aspect-ratio:16/9;border:1px solid var(--line);overflow:hidden;background:#000}
+.promo__v{position:absolute;inset:0;transition:opacity .5s}
+.promo__v video{width:100%;height:100%;object-fit:cover}
+.promo__v2{opacity:0}
+#promo:checked~.promo__stage .promo__v1{opacity:0}
+#promo:checked~.promo__stage .promo__v2{opacity:1}
+.promo__btn{position:absolute;right:14px;bottom:14px;z-index:2;border:1px solid #fff;background:rgba(0,0,0,.6);color:#fff;padding:8px 14px;font-size:13px;cursor:pointer}
+.promo__btn:hover{background:#000}
+.promo__btn .to-prev{display:none}
+#promo:checked~.promo__stage .promo__btn .to-next{display:none}
+#promo:checked~.promo__stage .promo__btn .to-prev{display:inline}
+
+/* ====================================================
+   로그인 / 회원가입 모달
+   ==================================================== */
+.modal-t{position:absolute;opacity:0;width:0;height:0}
+.modal{position:fixed;inset:0;z-index:1100;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;transition:.2s}
+.modal__bd{position:absolute;inset:0;background:rgba(0,0,0,.4);width: 100%;height: 100%;}
+.modal__panel{position:relative;width:100%;max-width:380px;background:#fff;border:1px solid #111;padding:28px 24px}
+#m-login:checked~.modal--login,
+#m-join:checked~.modal--join{opacity:1;visibility:visible}
+.modal__close{position:absolute;top:12px;right:12px;width:30px;height:30px;border:1px solid var(--line);display:grid;place-items:center;cursor:pointer}
+.modal__close:hover{background:var(--hover)}
+.modal h3{font-size:20px;font-weight:700;margin-bottom:18px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.field input{width:100%;padding:10px 12px;border:1px solid var(--line);font-size:14px;outline:none}
+.field input:focus{border-color:#111}
+.btn-submit{width:100%;padding:12px;background:#111;color:#fff;font-weight:700;font-size:15px;margin-top:4px}
+.btn-submit:hover{background:#333}
+.modal__alt{text-align:center;margin-top:16px;font-size:13px;color:var(--muted)}
+.modal__alt label{color:#111;text-decoration:underline;cursor:pointer}
+
+/* ====================================================
+   서브페이지 — 3개 투어 선택 + hover 이름
+   ==================================================== */
+.sub-hero{margin-top:var(--header-h);padding:48px 0;border-bottom:1px solid var(--line)}
+.sub-hero h1{font-size:28px;font-weight:700}
+.sub-hero p{color:var(--muted);margin-top:8px}
+.tour-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px}
+.tour-tabs label{padding:12px 20px;border:1px solid var(--line);font-size:15px;color:var(--muted);cursor:pointer}
+.tour-tabs label:hover{background:var(--hover)}
+#tour1:checked~.tour-tabs label[for=tour1],
+#tour2:checked~.tour-tabs label[for=tour2],
+#tour3:checked~.tour-tabs label[for=tour3]{background:#111;color:#fff;border-color:#111}
+.tour-panel{display:none}
+#tour1:checked~.tour-panels .tour-panel:nth-child(1),
+#tour2:checked~.tour-panels .tour-panel:nth-child(2),
+#tour3:checked~.tour-panels .tour-panel:nth-child(3){display:block}
+.tour-panel__intro{margin-bottom:28px}
+.tour-panel__intro h2{font-size:22px;font-weight:700;margin-bottom:10px}
+.tour-panel__intro p{color:var(--muted);font-size:15px;line-height:1.8}
+.tour-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tour-fig{position:relative;height:320px;border:1px solid var(--line);overflow:hidden}
+.tour-fig img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.tour-fig:hover img{transform:scale(1.04)}
+.tour-fig__name{position:absolute;left:0;bottom:0;background:#111;color:#fff;font-size:14px;padding:8px 12px;opacity:0;transition:opacity .25s}
+.tour-fig:hover .tour-fig__name{opacity:1}
+
+/* ====================================================
+   반응형 — 480px
+   ==================================================== */
+@media(max-width:900px){
+  .news-grid{grid-template-columns:1fr 1fr}
+  .guide{grid-template-columns:1fr}
+  .tour-gallery{grid-template-columns:1fr}
+  .tour-fig{height:240px}
+}
+@media(max-width:480px){
+  .wrap{padding:0 16px}
+  .section{padding:40px 0}
+  .footer .wrap{flex-direction:column}
+
+  /* 데스크톱 메뉴 숨기고 햄버거 노출 */
+  .gnb,.search,.tools .btn{display:none}
+  .hamburger{display:grid;place-items:center;margin-left:auto;width:40px;height:40px;border:1px solid var(--line)}
+  .hamburger span{display:block;width:20px;height:2px;background:#111;position:relative}
+  .hamburger span::before,.hamburger span::after{content:"";position:absolute;left:0;width:20px;height:2px;background:#111;transition:.25s}
+  .hamburger span::before{top:-6px}.hamburger span::after{top:6px}
+  #nav-toggle:checked~.header .hamburger span{background:transparent}
+  #nav-toggle:checked~.header .hamburger span::before{top:0;transform:rotate(45deg)}
+  #nav-toggle:checked~.header .hamburger span::after{top:0;transform:rotate(-45deg)}
+
+  /* 백드롭 (상단 바 이외 영역 클릭 시 닫힘) */
+  .mobile-backdrop{display:none;position:fixed;inset:0;top:var(--header-h);z-index:880;background:rgba(0,0,0,.3);opacity:0;visibility:hidden;transition:.25s}
+  #nav-toggle:checked~.mobile-backdrop{display:block;opacity:1;visibility:visible}
+
+  /* 내비 (상단에서 내려오는 바) */
+  .mobile-nav{
+    display:block;position:fixed;top:var(--header-h);left:0;right:0;z-index:898;
+    background:#fff;border-bottom:1px solid #111;
+    transform:translateY(-110%);transition:transform .3s ease;
+  }
+  #nav-toggle:checked~.mobile-nav{transform:translateY(0)}
+  .mobile-nav a{display:block;padding:16px;font-size:16px;border-bottom:1px solid var(--line)}
+  .mobile-nav a:hover{background:var(--hover)}
+  .mnav-auth{display:flex;gap:8px;padding:14px 16px}
+  .mnav-auth label{flex:1;text-align:center;padding:12px;border:1px solid var(--line);font-size:14px;cursor:pointer}
+  .mnav-auth .join{background:#111;color:#fff;border-color:#111}
+
+  .visual{height:340px}
+  .news-grid{grid-template-columns:1fr}
+  .editor__track,
+  #ed1:checked~.editor__vp .editor__track,#ed2:checked~.editor__vp .editor__track,
+  #ed3:checked~.editor__vp .editor__track,#ed4:checked~.editor__vp .editor__track,
+  #ed5:checked~.editor__vp .editor__track,#ed6:checked~.editor__vp .editor__track,
+  #ed7:checked~.editor__vp .editor__track,#ed8:checked~.editor__vp .editor__track{
+    transform:none;overflow-x:auto;
+  }
+  .ed-card{width:80vw;flex-basis:80vw;height:260px}
+  .ed-card img{opacity:1}
+  .ed-card__cap{opacity:1}
 }
 
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:var(--sans);color:var(--fg);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
-img{display:block;max-width:100%}
-a{color:inherit;text-decoration:none}
-ul{list-style:none}
-button{font:inherit;cursor:pointer;background:none;border:none;color:inherit}
-
-.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
-.section{padding:56px 0;border-top:1px solid var(--line)}
-.section-title{font-size:22px;font-weight:700;margin-bottom:24px}
-.more{font-size:13px;color:var(--muted);border:1px solid var(--line);padding:5px 12px;display:inline-block}
-.more:hover{background:var(--hover)}
-.pt {padding: 100px 0;}
-
-/* ---------- 로딩 (약 5초) ---------- */
-.loader{
-  position:fixed;inset:0;z-index:1000;background:#fff;
-  display:grid;place-items:center;
-  animation:loaderOut .4s ease 5s forwards;
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;transition-duration:.01ms!important}
+  .loader{animation:loaderOut .3s ease 5s forwards}
+  .loader__bar::after{animation:load 5s linear forwards}
 }
-.loader__box{text-align:center}
-.loader__title{font-size:26px;font-weight:700;letter-spacing:-.01em}
-.loader__bar{width:200px;height:2px;background:var(--line);margin:18px auto 0;overflow:hidden}
-.loader__bar::after{content:"";display:block;height:100%;width:0;background:#111;animation:load 5s linear forwards}
-.loader__cap{margin-top:12px;font-size:12px;color:var(--faint);letter-spacing:.2em}
-@keyframes load{to{width:100%}}
-@keyframes loaderOut{to{opacity:0;visibility:hidden}}
-
-/* ---------- 헤더 (고정) ---------- */
-.header{
-  position:fixed;top:0;left:0;right:0;z-index:900;height:var(--header-h);
-  background:#fff;border-bottom:1px solid var(--line);
-}
-.header .wrap{height:100%;display:flex;align-items:center;gap:24px}
-.logo{font-size:18px;font-weight:700;flex-shrink:0}
-.gnb{display:flex;gap:4px}
-.gnb a{padding:8px 12px;font-size:15px;color:var(--muted)}
-.gnb a:hover{color:#111;background:var(--hover)}
-.tools{margin-left:auto;display:flex;align-items:center;gap:8px}
-.search{display:flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 10px}
-.search input{border:none;outline:none;font-size:14px;width:120px}
-.btn{font-size:14px;padding:7px 12px;border:1px solid var(--line)}
-.btn:hover{background:var(--hover)}
-.btn.dark{background:#111;color:#fff;border-color:#111}
-.btn.dark:hover{background:#333}
-
-/* 햄버거 (모바일 전용) — 토글 input은 화면 밖으로 숨김(display:none 회피) */
-.nav-toggle{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-.hamburger{display:none}
-.mobile-backdrop{display:none}
-.mobile-nav{display:none}
-
-/* ---------- 푸터 ---------- */
-.footer{border-top:1px solid var(--line);padding:40px 0;color:var(--muted)}
-.footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
-.footer__logo{font-size:18px;font-weight:700;color:#111;margin-bottom:14px}
-.footer__info{font-size:13px;line-height:1.9}
-.footer__copy{margin-top:14px;font-size:12px;color:var(--faint)}
-.footer__social{display:flex;gap:8px}
-.footer__social a{width:38px;height:38px;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;color:var(--muted)}
-.footer__social a:hover{background:var(--hover);color:#111}
-
-
-/* 폼 */
-form {display: flex;flex-direction: column;gap: 20px;align-items: center;justify-content: center;}
-input {padding: 10px;width: 100%;}
-label {width: 350px;display: flex;align-items: center; white-space: nowrap;gap: 20px;}

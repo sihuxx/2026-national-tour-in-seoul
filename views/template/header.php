@@ -108,7 +108,7 @@ $user = ss();
             if (!pwValue) return alert("비밀번호는 영문과 숫자 조합으로 5자 이상이어야 합니다.");
         });
     </script>
-    <script>
+    <!-- <script>
         async function load() {
             const data = await fetch('/asset/seoul_tour.json').then(res => res.json());
 
@@ -128,4 +128,4 @@ $user = ss();
         }
 
         load();
-    </script>
+    </script> -->
