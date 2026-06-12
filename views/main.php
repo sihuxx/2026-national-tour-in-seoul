@@ -8,12 +8,7 @@
 </div> -->
 
 <?php
-$category = $_GET["category"] ?? null;
-if ($category) {
-  $tours = db::fetchAll("select * from tours where category = $category order by start_date asc");
-} else {
-  $tours = db::fetchAll("select * from tours order by start_date asc");
-}
+$tours = db::fetchAll("select * from tours order by start_date asc");
 ?>
 
 <!-- 비주얼 -->
@@ -187,35 +182,35 @@ if ($category) {
       <!-- 탭 -->
       <div class="tabs">
         <div class="tabs__nav">
-          <label onclick="location.href = '/'">전체</label>
-          <label onclick="location.href = '/?category=1'">축제&amp;행사</label>
-          <label onclick="location.href = '/?category=0'">전시&amp;공연</label>
+          <label class="active" data-tab="">전체</label>
+          <label data-tab="1">축제&amp;행사</label>
+          <label data-tab="0">전시&amp;공연</label>
         </div>
         <div class="tabs__body">
-          <?php if (!$category) { ?>
-            <ul class="panel panel-all">
-              <?php foreach ($tours as $tour) { ?>
-                <li><span><span class="badge"><?= $tour->category ?></span><?= $tour->title ?></span><span class="date"><?= $tour->start_date ?>~<?= $tour->end_date ?></span></li>
-              <?php } ?>
-            </ul>
-          <?php } else if ($category == 1) { ?>
-            <ul class="panel panel-show">
-              <?php foreach ($tours as $tour) { ?>
-                <li><span><span class="badge"><?= $tour->category ?></span><?= $tour->title ?></span><span class="date"><?= $tour->start_date ?>~<?= $tour->end_date ?></span></li>
-              <?php } ?>
-            </ul>
-          <?php } else { ?>
-            <ul class="panel panel-test">
-              <?php foreach ($tours as $tour) { ?>
-                <li><span><span class="badge"><?= $tour->category ?></span><?= $tour->title ?></span><span class="date"><?= $tour->start_date ?>~<?= $tour->end_date ?></span></li>
-              <?php } ?>
-            </ul>
-          <?php } ?>
+          <ul class="panel">
+          </ul>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<div class="popup">
+    <div class="popup-header">
+      <span class="badge event-category btn"></span>
+      <button class="popup-close btn dark">닫기</button>
+    </div>
+    <div class="popup-info">
+      <img src="" class="event-img">
+      <div class="info">
+        <div class="event-title"></div>
+        <div class="event-date"></div>
+        <div class="event-time"></div>
+        <div class="event-place"></div>
+        <div class="event-organization"></div>
+      </div>
+    </div>
+</div>
 
 <!-- 에디터 추천여행 -->
 <section class="section">
@@ -303,10 +298,25 @@ if ($category) {
 
 <script>
   let current = new Date();
+  let curYear = 2026;
+  let curMonth = 8;
+  let curTab = "";
   const now = new Date();
   const calendar = $(".calendar__grid");
   const header = $(".calendar__top b");
   const tours = <?= json_encode($tours) ?>;
+
+  function filterTours() {
+    return tours.filter(tour => {
+      const start = new Date(tour.start_date);
+      const end = new Date(tour.end_date);
+      const monthStart = new Date(curYear, curMonth - 1, 1);
+      const monthEnd = new Date(curYear, curMonth, 0);
+      const inMonth = start <= monthEnd && end >= monthStart;
+      const inTab = curTab === "" || tour.category == curTab;
+      return inMonth && inTab;
+    })
+  }
 
   function render() {
     const year = current.getFullYear();
@@ -327,14 +337,60 @@ if ($category) {
     }).join("");
     calendar.innerHTML = padding + days;
     header.innerHTML = `${year}년 ${month + 1}월`
+
+    const filtered = filterTours();
+    const list = $(".panel");
+
+    list.innerHTML = filtered.map(tour => `
+  <li data-id="${tour.idx}"><span><span class="badge">${+tour.category ? "축제&행사" : "전시&공연"}</span>${tour.title}</span><span class="date">${tour.start_date}~${tour.end_date}</span></li>
+    `).join("");
+
+    $$(".tabs__nav label").forEach(nav => {
+      nav.onclick = () => {
+        $$(".tabs__nav label").forEach(all => all.classList.remove('active'));
+        nav.classList.add("active");
+        curTab = nav.dataset.tab;
+        render();
+      }
+    })
+
     $(".prev-btn").onclick = () => {
+      curMonth--
+      if (curMonth < 1) {
+        curMonth = 12;
+        curYear--
+      }
       current.setMonth(current.getMonth() - 1);
       render();
     };
+    list.querySelectorAll("li").forEach(li => {
+      li.onclick = () => openPopup(li.dataset.id);
+    })
+
     $(".next-btn").onclick = () => {
+      curMonth++
+      if (curMonth > 12) {
+        curMonth = 1;
+        curYear++
+      }
       current.setMonth(current.getMonth() + 1);
       render();
     };
   }
+
+  function openPopup(idx) {
+    const tour = tours.find(t => t.idx == idx);
+    $(".popup .event-category").textContent = +tour.category ? "축제&행사" : "전시&공연";
+    $(".popup .event-title").textContent = tour.title;
+    $(".popup .event-date").textContent = `${tour.start_date} ~ ${tour.end_date}`;
+    $(".popup .event-place").textContent = tour.place;
+    $(".popup .event-organization").textContent = tour.organization;
+    $(".popup .event-img").src =`/asset/tours/${tour.photo}`;
+    $(".popup").style.display = 'flex';
+    $(".popup-close").onclick = () => {
+      $(".popup").style.display = 'none';
+    }
+  }
+
   render();
 </script>
